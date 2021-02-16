@@ -1,4 +1,4 @@
-# AutoApi v6.2 (2021-2-11) ———— E5自动续期
+# AutoApi v6.2.1 (2021-2-17) ———— E5自动续期
 AutoApi系列：~~AutoApi(v1.0)~~、~~AutoApiSecret(v2.0)~~、~~AutoApiSR(v3.0)~~、~~AutoApiS(v4.0)~~、~~AutoApiP(v5.0)~~
 
 ## 说明 ##
@@ -20,7 +20,6 @@ AutoApi系列：~~AutoApi(v1.0)~~、~~AutoApiSecret(v2.0)~~、~~AutoApiSR(v3.0)~
    * E5开发者账号（**非个人/私人账号**）
        * 管理员号 ———— 必选 
        * 子号 ———— 可选 （不清楚微软是否会统计子号的活跃度，想弄可选择性补充运行）    
-   * rclone软件，[下载地址 rclone.org ](https://downloads.rclone.org/v1.53.3/rclone-v1.53.3-windows-amd64.zip)，(windows 64）
    * 教程图片看不到请科学上网
    
 * 步骤大纲：
@@ -32,11 +31,11 @@ AutoApi系列：~~AutoApi(v1.0)~~、~~AutoApiSecret(v2.0)~~、~~AutoApiSR(v3.0)~
 
 * **第一步，注册应用，获取应用id、secret**
 
-    * 1）点击打开[仪表板](https://aad.portal.azure.com/)，左边点击**所有服务**，找到**应用注册**，点击+**新注册**
+    * 1）点击打开[应用注册页面](https://go.microsoft.com/fwlink/?linkid=2083908)，点击+**新注册**
     
      ![image](https://github.com/wangziyingwen/ImageHosting/blob/master/AutoApiP/creatapp.png)
     
-    * 2）填入名字，受支持账户类型前三任选，重定向填入 http://localhost:53682/ ，点击**注册**
+    * 2）填入名字，‘受支持账户类型’选第三个，重定向填入 https://login.microsoftonline.com/common/oauth2/nativeclient ，点击**注册**
     
     ![image](https://github.com/wangziyingwen/ImageHosting/blob/master/AutoApiP/creatapp2.png)
     
@@ -46,46 +45,16 @@ AutoApi系列：~~AutoApi(v1.0)~~、~~AutoApiSecret(v2.0)~~、~~AutoApiSR(v3.0)~
     
     ![image](https://github.com/wangziyingwen/ImageHosting/blob/master/AutoApiP/creatapp4.png)
     
-    * 4）点击左边管理的**API权限**，点击+**添加权限**，点击常用Microsoft API里的**Microsoft Graph**(就是那个蓝色水晶)，
-    点击**委托的权限**，然后在下面的条例选中下列需要的权限，最后点击底部**添加权限**
-    
-    **赋予api权限的时候，选择以下13个**
-  
-                Calendars.ReadWrite、Contacts.ReadWrite、Directory.ReadWrite.All、
-                
-                Files.ReadWrite.All、Group.ReadWrite.All、MailboxSettings.ReadWrite、
-                
-                Mail.ReadWrite、Mail.Send、Notes.ReadWrite.All、
-                
-                People.Read.All、Sites.ReadWrite.All、Tasks.ReadWrite、
-                
-                User.ReadWrite.All
-                               
-    
-    ![image](https://github.com/wangziyingwen/ImageHosting/blob/master/AutoApiP/creatapp5.png)
-    
-    ![image](https://github.com/wangziyingwen/ImageHosting/blob/master/AutoApiP/creatapp6.png)
-     
-    ![image](https://github.com/wangziyingwen/ImageHosting/blob/master/AutoApiP/creatapp8.png)
-    
-    * 5）添加完自动跳回到权限首页，点击**代表授予管理员同意**
-         
-         如若是**子号**运行，请用管理员账号登录[仪表板](https://aad.portal.azure.com/)找到**子号注册的应用**，点击“代表管理员授权”。 
-    
-    ![image](https://github.com/wangziyingwen/ImageHosting/blob/master/AutoApiP/creatapp7.png)
-    
 * **第二步，获取refresh_token(微软密钥)**
 
-    * 1）rclone.exe所在文件夹，shift+右键，在此处打开powershell，输入下面**修改后**的内容，回车后跳出浏览器，登入e5账号，点击接受，回到powershell窗口，看到一串东西。
-           
-                ./rclone authorize "onedrive" "应用程序(客户端)ID" "应用程序密码"
+    * 两种选择：
+        * 下载项目里的GetToken.html文件；或者本地新建html后缀文档，把GetToken.html的内容复制到里面。然后本地打开，根据里面提示获取refresh_token.
+        * 进入[在线版](https://wangziyingwen.github.io/)，根据提示获取refresh_token
                
-    * 2）在那一串东西里找到 "refresh_token"：" ，从双引号开始选中到 ","expiry":2021 为止（就是refresh_token后面双引号里那一串，不要双引号），如下图，右键复制保存（**获得了微软密钥**）
     
     ![image](https://github.com/wangziyingwen/ImageHosting/blob/master/AutoApi/token地方.png)
     
- ____________________________________________________
- 
+ ___________________________________________________
  #### GITHUB方面的准备工作 ####
 
  * **第一步，fork本项目**

@@ -1,0 +1,181 @@
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>GetRefreshToken</title>
+  <style type="text/css">
+    body{
+      background-color: #FFFAFA;
+      font-weight: 300;
+    }
+    #header {
+      position:relative;
+      z-index:2;
+      box-shadow: 0px 0px 13px #B22222;
+      background-color: #ff9f7c;
+      color:white;
+      text-align:center;
+      padding:5px;
+    }
+    #nav {
+      z-index:1;
+      box-shadow: 0px 0px 10px #FA8072;
+      line-height:30px;
+      color: #B22222;
+      background-color:	#FFDAB9;
+      height:525px;
+      width:100px;
+      float:left;
+      padding:5px;	     
+    }
+    #section {
+     width:520px;
+     height:525px;
+     float:left;
+     padding:5px;	 	 
+    }
+    #part2 {
+     float:left;	 	 
+    }
+    #footer {
+     box-shadow: 0px 0px 10px #B22222;
+     position:relative;
+     z-index:2;
+     background-color: #ff9f7c;
+     color:white;
+     clear:both;
+     text-align:center;
+     padding:5px;     
+    }
+    textarea {
+      width:250px;
+      height:80px;
+      resize: none;
+    }
+    table{
+    box-shadow: 0px 0px 6px #FA8072;
+    background-color: #FFFAF0;
+    margin:5px 20px;
+    }
+    td {
+      width:120px;
+      padding:6px 10px;
+    }
+    p {
+      line-height:26px;
+      margin:10px 30px;
+    }
+  </style>
+</head>
+<body>
+        <form action="https://login.microsoftonline.com/common/oauth2/v2.0/authorize" method="GET" target="_blank" style="display:none">
+           <input type="text" name="scope" class="scope" placeholder="scope"/>          
+           <input type="text" name="response_type" placeholder="response_type" value="code"/>
+           <input type="text" name="client_id" class="client_id" placeholder="client_id"/>
+           <input type="text" name="redirect_uri" class="redirect_uri" placeholder="redirect_uri"/>
+           <input type="submit" id="submit_1"/>
+        </form>
+        <form action="https://login.microsoftonline.com/common/oauth2/v2.0/token" method="POST" target="_blank" style="display:none">
+           <input type="text" name="scope" class="scope" placeholder="scope"/> 
+           <input type="text" name="client_id" class="client_id" placeholder="client_id"/>
+           <input type="text" name="client_secret" class="client_secret" placeholder="client_secret"/>           
+           <input type="text" name="grant_type" placeholder="authorization_code" value="authorization_code"/>                   
+           <input type="text" name="redirect_uri" class="redirect_uri" placeholder="redirect_uri"/>
+           <input type="text" name="code" id="code_2" placeholder="code"/>
+           <input type="submit" id="submit_2" />
+        </form>
+        <form action="https://login.microsoftonline.com/organizations/v2.0/adminconsent" method="GET" target="_blank" style="display:none">
+           <input type="text" name="scope" class="scope" placeholder="scope"/>          
+           <input type="text" name="client_id" class="client_id" placeholder="client_id"/>
+           <input type="text" name="redirect_uri" class="redirect_uri" placeholder="redirect_uri"/>
+           <input type="submit" id="submit_3"/>
+        </form>
+        <div id="header">
+        <h1>AutoApi GetToken</h1>
+        </div>
+        <div>
+        <div id="nav">
+        <h3>第一步</h3><h3>获取</h3><h3>Code</h3>
+        </div>
+        <div id="section">
+        <p>● 只需输入应用id跟密码，点击"获取code"。</br>( 注意授权许可页面最好勾选"代表组织同意" )</p> 
+        <p>● 许可接受后会跳转出现空白页面，不用管。</p>
+        <p>● 直接复制浏览器的地址栏备用</br>( 类似 localhost/?code=abc...xyz%session_state=xxx )</br></p>
+        </ul>
+        <table>
+        <tr>
+        <td>输入应用id：</td>
+        <td><input type="text" id="client_id" placeholder="请输入client_id"/></td>
+        </tr>
+        <tr>
+        <td>输入应用密码：</td>
+        <td><input type="text" id="client_secret" placeholder="请输入client_secret"/></td>
+        </tr>
+        <!-- 显式方便自定义 WZYW-->
+        <tr>
+        <td>重定向url：</td>
+        <td><input type="text" id="redirect_uri" placeholder="重定向url,不用填" value="https://login.microsoftonline.com/common/oauth2/nativeclient"/></td>
+        </tr>
+        <tr>
+        <td>所需api权限：</td>
+        <td><textarea type="text" id="scope" placeholder="授权api，不用填">offline_access Calendars.ReadWrite Contacts.ReadWrite Directory.ReadWrite.All Files.ReadWrite.All Group.ReadWrite.All MailboxSettings.ReadWrite Mail.ReadWrite Mail.Send Notes.ReadWrite.All People.Read.All Sites.ReadWrite.All Tasks.ReadWrite User.ReadWrite.All</textarea></td>
+        </tr>
+        <tr>
+        <td>管理员号：</td>
+        <td><input type="button" value="获取code" onclick="getCoke(0)"/></td>
+        </tr>
+        <tr>
+        <td>子号：</td>
+        <td><input type="button" value="先点此按钮，用管理员号登录授权" onclick="getCoke(1)"/>
+        <input type="button" value="再点击此按钮，子号登录获取code" onclick="getCoke(0)"/></td>
+        </tr>
+        </table>
+        </div>
+        </div>
+        <div id="part2">
+        <div id="nav">
+        <h3>第二步</h3><h3>获取</h3><h3>Token</h3>
+        </div>
+        <div id="section">
+        <p>● 第一步复制的网址在下面url-code框中填入</p> 
+        <p>● 点击获取Token，会跳出一大段abcdefg，</br>从中找到 "refresh_token": "cba...zyx"</p> 
+        <p>● 然后复制后面双引号的内容（即cba...zyx），</br>到这里就获得了refresh_token</br></p>
+        <table>
+        <tr>
+        <td>输入url-code：</td>
+        <td><textarea type="text" name="code" placeholder="url-code" id="code_0"></textarea></td>
+        <tr>
+        <tr><td></td><td><input type="button" value="获取Token" onclick="getToken()"/></td></tr>
+        </table>
+        <div id="errormsg"></div>
+        </div>
+        </div>
+        <div id="footer">
+        wangziyinwgen.github.io
+        </div>
+        <script>
+            function getCoke(account_type){
+              let data_list = ["client_id","client_secret","scope","redirect_uri"];
+              for (di=0;di<4;di++){
+                for (i=0;i<document.getElementsByClassName(data_list[di]).length;i++){
+                  document.getElementsByClassName(data_list[di])[i].value = document.getElementById(data_list[di]).value;
+                };  
+              }; 
+              if (account_type==0){             
+                document.getElementById('submit_1').click();
+              } else {
+                document.getElementById('submit_3').click();
+              };                       
+            };
+            function getToken(){             
+              let url = new URL(document.getElementById('code_0').value);
+              if (url.searchParams.get('code')) {
+                  document.getElementById('code_2').value = url.searchParams.get('code');
+                  document.getElementById('submit_2').click();
+                } else if (url.searchParams.get('error')) {
+                    document.getElementById("errormsg").innerText = "出错 "+url.searchParams.get('error') + ":\n" + url.searchParams.get('error_description');
+                  };
+            };
+        </script>
+</body>
+
+</html>
