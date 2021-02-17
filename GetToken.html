@@ -1,33 +1,33 @@
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset='utf-8' />
   <title>GetRefreshToken</title>
   <style type="text/css">
     body{
-      background-color: #FFFAFA;
+      background-color: snow;
       font-weight: 300;
     }
     #header {
       position:relative;
       z-index:2;
       box-shadow: 0px 0px 13px #B22222;
-      background-color: #ff9f7c;
+      background-color: #FA8072;
       color:white;
       text-align:center;
       padding:5px;
     }
-    #nav {
-      z-index:1;
+    .nav {
       box-shadow: 0px 0px 10px #FA8072;
       line-height:30px;
       color: #B22222;
       background-color:	#FFDAB9;
-      height:525px;
+      height:526px;
       width:100px;
       float:left;
       padding:5px;	     
     }
-    #section {
+    .section {
      width:520px;
      height:525px;
      float:left;
@@ -36,11 +36,16 @@
     #part2 {
      float:left;	 	 
     }
+    .pcss {
+      margin:10px 30px;
+      width:400px;
+      height:180px;
+    }
     #footer {
      box-shadow: 0px 0px 10px #B22222;
      position:relative;
      z-index:2;
-     background-color: #ff9f7c;
+     background-color: #FA8072;
      color:white;
      clear:both;
      text-align:center;
@@ -51,18 +56,29 @@
       height:80px;
       resize: none;
     }
-    table{
-    box-shadow: 0px 0px 6px #FA8072;
-    background-color: white;
-    margin:5px 20px;
+    table {
+      border-radius: 6px;
+      box-shadow: 0px 0px 6px #FA8072;
+      background-color: white;
+      margin:5px 20px;
     }
     td {
       width:120px;
-      padding:6px 10px;
+      padding:4px 8px;
+      font-weight: 500;
     }
-    p {
-      line-height:26px;
-      margin:10px 30px;
+    input,textarea {
+	  background: #FFFFFF;
+	  border: 1px solid #D9D9D9;
+	  border-radius: 4px;
+	  padding:3 10px;
+	}
+    input{
+      width: 180px;
+	  height: 24px;
+    }
+    input:hover {
+      box-shadow: 0px 0px 2px #B22222;
     }
   </style>
 </head>
@@ -92,15 +108,16 @@
         <div id="header">
         <h1>AutoApi GetToken</h1>
         </div>
-        <div>
-        <div id="nav">
-        <h3>第一步</h3><h3>获取</h3><h3>Code</h3>
+        <div id="part1">
+        <div class="nav">
+        <h3>&nbsp第一步</h3><h3>&nbsp获取</h3><h3>&nbspCode</h3>
         </div>
-        <div id="section">
-        <p>● 只需输入应用id跟密码，点击"获取code"。</br>( 注意授权许可页面最好勾选"代表组织同意" )</p> 
+        <div class="section">
+        <div class="pcss">
+        <p>● 只需输入应用id跟密码，点击"获取code"。</p><p>&nbsp&nbsp( 注意授权许可页面最好勾选"代表组织同意" )</p> 
         <p>● 许可接受后会跳转出现空白页面，不用管。</p>
-        <p>● 直接复制空白页的地址栏（网址）备用</br></br></p>
-        </ul>
+        <p>&nbsp&nbsp直接复制空白页的地址栏（网址）备用</br></br></p>
+        </div>
         <table>
         <tr>
         <td>输入应用id：</td>
@@ -121,38 +138,42 @@
         </tr>
         <tr>
         <td>管理员号：</td>
-        <td><input type="button" value="获取code" onclick="getCoke(0)"/></td>
+        <td><button type="button" onclick="getCoke(0)">获取code</button></td>
         </tr>
         <tr>
         <td>子号：</td>
-        <td><input type="button" value="先点此按钮，用管理员号登录授权" onclick="getCoke(1)"/>
-        <input type="button" value="再点击此按钮，子号登录获取code" onclick="getCoke(0)"/></td>
+        <td><button type="button" onclick="getCoke(1)">先点此按钮，用管理员号登录授权</button>
+        <button type="button" onclick="getCoke(0)">再点击此按钮，子号登录获取code</button></td>
         </tr>
         </table>
         </div>
         </div>
         <div id="part2">
-        <div id="nav">
-        <h3>第二步</h3><h3>获取</h3><h3>Token</h3>
+        <div class="nav">
+        <h3>&nbsp第二步</h3><h3>&nbsp获取</h3><h3>&nbspToken</h3>
         </div>
-        <div id="section">
-        <p>● 第一步复制的网址在下面url-code框中填入</p> 
-        <p>● 点击获取Token，会跳出一大段abcdefg，</br>从中找到 "refresh_token": "cba...zyx"</p> 
-        <p>● 然后复制后面双引号的内容（即cba...zyx），</br>到这里就获得了refresh_token</br></p>
+        <div class="section">
+        <div class="pcss">
+        <p>● 第一步复制的网址在下面url-code框中填入，点击获取Token。</p> 
+        <p>● 会跳出一大段abcdefg，全选复制进url-code框，点击解析并复制refresh_token，同时refresh_token也会在url-code框内显示</p>
+        <p>&nbsp&nbsp当然你也可以手动在abcdefg中寻找refresh_token，并复制refresh_token后紧跟着的双引号里的内容</br></p>
+        </div>
         <table>
         <tr>
         <td>输入url-code：</td>
-        <td><textarea type="text" name="code" placeholder="url-code" id="code_0"></textarea></td>
+        <td><textarea type="text" name="code" placeholder="请输入url-code" id="code_0"></textarea></td>
         <tr>
-        <tr><td></td><td><input type="button" value="获取Token" onclick="getToken()"/></td></tr>
+        <tr><td></td><td><button type="button" onclick="getToken()">获取Token</button></td></tr>
+        <tr><td></td><td><button type="button" onclick="getRefreshToken()">解析并复制refresh_token</button></td></tr>
         </table>
         <div id="errormsg"></div>
         </div>
         </div>
         <div id="footer">
-        wangziyinwgen.github.io
+        wangziyinwgen.github.io</br>
+        获取微软refresh_token — 通用型工具
         </div>
-        <script>
+        <script type="text/javascript">
             function getCoke(account_type){
               let data_list = ["client_id","client_secret","scope","redirect_uri"];
               for (di=0;di<4;di++){
@@ -171,9 +192,20 @@
               if (url.searchParams.get('code')) {
                   document.getElementById('code_2').value = url.searchParams.get('code');
                   document.getElementById('submit_2').click();
+                  document.getElementById('code_0').value="";
                 } else if (url.searchParams.get('error')) {
                     document.getElementById("errormsg").innerText = "出错 "+url.searchParams.get('error') + ":\n" + url.searchParams.get('error_description');
                   };
+            };
+            function getRefreshToken() {
+              if (document.getElementById('code_0').value){
+                let jsoncode = JSON.parse(document.getElementById('code_0').value);
+                document.getElementById('code_0').value = jsoncode.refresh_token;
+                let input = document.getElementById('code_0');
+                input.select();
+                document.execCommand("copy");
+                alert("refresh_token已复制到剪切板");
+              };
             };
         </script>
 </body>
