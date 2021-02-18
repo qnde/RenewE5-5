@@ -120,9 +120,9 @@ def excelWrite(a,filesname,sheet):
         print('    添加表格')
         url=r'https://graph.microsoft.com/v1.0/me/drive/root:/AutoApi/App'+str(a)+r'/'+filesname+r':/workbook/worksheets/'+sheet+r'/tables/add'
         data={
-            "address": "A1:D8",
-            "hasHeaders": False
-            }
+             "address": "A1:D8",
+             "hasHeaders": False
+             }
         jsontxt=json.loads(apiReq('post',a,url,json.dumps(data)))
         print('    添加行')
         url=r'https://graph.microsoft.com/v1.0/me/drive/root:/AutoApi/App'+str(a)+r'/'+filesname+r':/workbook/tables/'+jsontxt['id']+r'/rows/add'
@@ -131,10 +131,10 @@ def excelWrite(a,filesname,sheet):
             for v2 in range(0,4):
                 rowsvalues[v1][v2]=random.randint(1,1200)
         data={
-            "values": rowsvalues
-            }
+             "values": rowsvalues
+             }
         apiReq('post',a,url,json.dumps(data))
-    except KeyError:
+    except:
         print("        操作中断")
         return 
     
@@ -143,14 +143,14 @@ def taskWrite(a,taskname):
         print("    创建任务列表")
         url=r'https://graph.microsoft.com/v1.0/me/todo/lists'
         data={
-            "displayName": taskname
-            }
+             "displayName": taskname
+             }
         listjson=json.loads(apiReq('post',a,url,json.dumps(data)))
         print("    创建任务")
         url=r'https://graph.microsoft.com/v1.0/me/todo/lists/'+listjson['id']+r'/tasks'
         data={
-            "title": taskname,
-            }
+             "title": taskname,
+             }
         taskjson=json.loads(apiReq('post',a,url,json.dumps(data)))
         print("    删除任务")
         url=r'https://graph.microsoft.com/v1.0/me/todo/lists/'+listjson['id']+r'/tasks/'+taskjson['id']
@@ -158,7 +158,7 @@ def taskWrite(a,taskname):
         print("    删除任务列表")
         url=r'https://graph.microsoft.com/v1.0/me/todo/lists/'+listjson['id']
         apiReq('delete',a,url)
-    except KeyError:
+    except:
         print("        操作中断")
         return 
     
@@ -168,10 +168,10 @@ def teamWrite(a,channelname):
         print('    新建team')
         url=r'https://graph.microsoft.com/v1.0/teams'
         data={
-            "template@odata.bind": "https://graph.microsoft.com/v1.0/teamsTemplates('standard')",
-            "displayName": channelname,
-            "description": "My Sample Team’s Description"
-            }
+             "template@odata.bind": "https://graph.microsoft.com/v1.0/teamsTemplates('standard')",
+             "displayName": channelname,
+             "description": "My Sample Team’s Description"
+             }
         apiReq('post',a,url,json.dumps(data))
         print("    获取team信息")
         url=r'https://graph.microsoft.com/v1.0/me/joinedTeams'
@@ -181,10 +181,10 @@ def teamWrite(a,channelname):
                 #创建频道
                 print("    创建team频道")
                 data={
-                    "displayName": channelname,
-                    "description": "This channel is where we debate all future architecture plans",
-                    "membershipType": "standard"
-                    }
+                     "displayName": channelname,
+                     "description": "This channel is where we debate all future architecture plans",
+                     "membershipType": "standard"
+                     }
                 url=r'https://graph.microsoft.com/v1.0/teams/'+teamlist['value'][teamcount]['id']+r'/channels'
                 jsontxt = json.loads(apiReq('post',a,url,json.dumps(data)))
                 url=r'https://graph.microsoft.com/v1.0/teams/'+teamlist['value'][teamcount]['id']+r'/channels/'+jsontxt['id']
@@ -194,7 +194,7 @@ def teamWrite(a,channelname):
                 print("    删除team")
                 url=r'https://graph.microsoft.com/v1.0/groups/'+teamlist['value'][teamcount]['id']
                 apiReq('delete',a,url)  
-    except KeyError:
+    except:
         print("        操作中断")
         return 
         
@@ -203,8 +203,8 @@ def onenoteWrite(a,notename):
         print('    创建笔记本')
         url=r'https://graph.microsoft.com/v1.0/me/onenote/notebooks'
         data={
-            "displayName": notename,
-            }
+             "displayName": notename,
+             }
         notetxt = json.loads(apiReq('post',a,url,json.dumps(data)))
         print('    创建笔记本分区')
         url=r'https://graph.microsoft.com/v1.0/me/onenote/notebooks/'+notetxt['id']+r'/sections'
@@ -215,7 +215,7 @@ def onenoteWrite(a,notename):
         print('    删除笔记本')
         url=r'https://graph.microsoft.com/v1.0/me/drive/root:/Notebooks/'+notename
         apiReq('delete',a,url)
-    except KeyError:
+    except:
         print("        操作中断")
         return 
     
