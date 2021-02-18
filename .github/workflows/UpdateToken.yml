@@ -32,6 +32,7 @@ jobs:
         GH_REPO: ${{ github.repository }}
         #以下是微软的账号信息（修改以下，类推复制增加）
         APP_NUM: ${{ secrets.APP_NUM }} 
+        REDIRECT_URI: ${{ secrets.REDIRECT_URL }}
         #账号/应用1
         MS_TOKEN_1: ${{ secrets.MS_TOKEN }} 
         CLIENT_ID_1: ${{ secrets.CLIENT_ID }}

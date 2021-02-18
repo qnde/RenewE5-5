@@ -4,10 +4,16 @@ import xlsxwriter
 import requests as req
 import json,sys,time,random
 
-#reload(sys)
-#sys.setdefaultencoding('utf-8')
 emailaddress=os.getenv('EMAIL')
 app_num=os.getenv('APP_NUM')
+redirect_uri=os.getenv('REDIRECT_URI')
+city=os.getenv('CITY')
+if app_num == '':
+    app_num = '1'
+if redirect_uri =='':
+    redirect_uri = r'https://login.microsoftonline.com/common/oauth2/nativeclient'
+if city == '':
+    city = 'Beijing'
 ###########################
 # config选项说明
 # 0：关闭  ， 1：开启
@@ -23,23 +29,20 @@ config = {
          'rounds_delay': [0,0,5],
          'api_delay': [0,0,5],
          'app_delay': [0,0,5],
-         }        
-if app_num == '':
-    app_num = '1'
-city=os.getenv('CITY')
-if city == '':
-    city = 'Beijing'
+         }
 access_token_list=['wangziyingwen']*int(app_num)
+
 
 #微软refresh_token获取
 def getmstoken(ms_token,appnum):
+    #try:except?
     headers={'Content-Type':'application/x-www-form-urlencoded'
             }
     data={'grant_type': 'refresh_token',
         'refresh_token': ms_token,
         'client_id':client_id,
         'client_secret':client_secret,
-        'redirect_uri':'https://login.microsoftonline.com/common/oauth2/nativeclient'
+        'redirect_uri':redirect_uri,
         }
     for retry_ in range(4):
         html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token',data=data,headers=headers)
@@ -82,9 +85,6 @@ def apiReq(method,a,url,data='QAQ'):
         else:
             if retry_ == 3:
                 print('        操作失败')
-#    if posttext.status_code > 300:
-#        print('        操作失败')
-#        #成功不提示
     return posttext.text
           
 
@@ -97,108 +97,127 @@ def uploadFile(a,filesname,f):
 # 发送邮件到自定义邮箱
 def sendEmail(a,subject,content):
     url=r'https://graph.microsoft.com/v1.0/me/sendMail'
-    mailmessage={'message': {'subject': subject,
-                             'body': {'contentType': 'Text', 'content': content},
-                             'toRecipients': [{'emailAddress': {'address': emailaddress}}],
-                             },
-                 'saveToSentItems': 'true'}            
+    mailmessage={
+                'message':{
+                          'subject': subject,
+                          'body': {'contentType': 'Text', 'content': content},
+                          'toRecipients': [{'emailAddress': {'address': emailaddress}}],
+                          },
+                'saveToSentItems': 'true',
+                }            
     apiReq('post',a,url,json.dumps(mailmessage))	
 	
 #修改excel(这函数分离好像意义不大)
 #api-获取itemid: https://graph.microsoft.com/v1.0/me/drive/root/search(q='.xlsx')?select=name,id,webUrl
 def excelWrite(a,filesname,sheet):
-    print('    添加工作表')
-    url=r'https://graph.microsoft.com/v1.0/me/drive/root:/AutoApi/App'+str(a)+r'/'+filesname+r':/workbook/worksheets/add'
-    data={
-         "name": sheet
-         }
-    apiReq('post',a,url,json.dumps(data))
-    print('    添加表格')
-    url=r'https://graph.microsoft.com/v1.0/me/drive/root:/AutoApi/App'+str(a)+r'/'+filesname+r':/workbook/worksheets/'+sheet+r'/tables/add'
-    data={
-         "address": "A1:D8",
-         "hasHeaders": False
-         }
-    jsontxt=json.loads(apiReq('post',a,url,json.dumps(data)))
-    print('    添加行')
-    url=r'https://graph.microsoft.com/v1.0/me/drive/root:/AutoApi/App'+str(a)+r'/'+filesname+r':/workbook/tables/'+jsontxt['id']+r'/rows/add'
-    rowsvalues=[[0]*4]*2
-    for v1 in range(0,2):
-        for v2 in range(0,4):
-            rowsvalues[v1][v2]=random.randint(1,1200)
-    data={
-         "values": rowsvalues
-         }
-    apiReq('post',a,url,json.dumps(data))
+    try:
+        print('    添加工作表')
+        url=r'https://graph.microsoft.com/v1.0/me/drive/root:/AutoApi/App'+str(a)+r'/'+filesname+r':/workbook/worksheets/add'
+        data={
+             "name": sheet
+             }
+        apiReq('post',a,url,json.dumps(data))
+        print('    添加表格')
+        url=r'https://graph.microsoft.com/v1.0/me/drive/root:/AutoApi/App'+str(a)+r'/'+filesname+r':/workbook/worksheets/'+sheet+r'/tables/add'
+        data={
+            "address": "A1:D8",
+            "hasHeaders": False
+            }
+        jsontxt=json.loads(apiReq('post',a,url,json.dumps(data)))
+        print('    添加行')
+        url=r'https://graph.microsoft.com/v1.0/me/drive/root:/AutoApi/App'+str(a)+r'/'+filesname+r':/workbook/tables/'+jsontxt['id']+r'/rows/add'
+        rowsvalues=[[0]*4]*2
+        for v1 in range(0,2):
+            for v2 in range(0,4):
+                rowsvalues[v1][v2]=random.randint(1,1200)
+        data={
+            "values": rowsvalues
+            }
+        apiReq('post',a,url,json.dumps(data))
+    except KeyError:
+        print("        操作中断")
+        return 
     
 def taskWrite(a,taskname):
-    print("    创建任务列表")
-    url=r'https://graph.microsoft.com/v1.0/me/todo/lists'
-    data={
-         "displayName": taskname
-         }
-    listjson=json.loads(apiReq('post',a,url,json.dumps(data)))
-    print("    创建任务")
-    url=r'https://graph.microsoft.com/v1.0/me/todo/lists/'+listjson['id']+r'/tasks'
-    data={
-         "title": taskname,
-         }
-    taskjson=json.loads(apiReq('post',a,url,json.dumps(data)))
-    print("    删除任务")
-    url=r'https://graph.microsoft.com/v1.0/me/todo/lists/'+listjson['id']+r'/tasks/'+taskjson['id']
-    apiReq('delete',a,url)
-    print("    删除任务列表")
-    url=r'https://graph.microsoft.com/v1.0/me/todo/lists/'+listjson['id']
-    apiReq('delete',a,url)    
+    try:
+        print("    创建任务列表")
+        url=r'https://graph.microsoft.com/v1.0/me/todo/lists'
+        data={
+            "displayName": taskname
+            }
+        listjson=json.loads(apiReq('post',a,url,json.dumps(data)))
+        print("    创建任务")
+        url=r'https://graph.microsoft.com/v1.0/me/todo/lists/'+listjson['id']+r'/tasks'
+        data={
+            "title": taskname,
+            }
+        taskjson=json.loads(apiReq('post',a,url,json.dumps(data)))
+        print("    删除任务")
+        url=r'https://graph.microsoft.com/v1.0/me/todo/lists/'+listjson['id']+r'/tasks/'+taskjson['id']
+        apiReq('delete',a,url)
+        print("    删除任务列表")
+        url=r'https://graph.microsoft.com/v1.0/me/todo/lists/'+listjson['id']
+        apiReq('delete',a,url)
+    except KeyError:
+        print("        操作中断")
+        return 
     
 def teamWrite(a,channelname):
     #新建team
-    print('    新建team')
-    url=r'https://graph.microsoft.com/v1.0/teams'
-    data={
-         "template@odata.bind": "https://graph.microsoft.com/v1.0/teamsTemplates('standard')",
-         "displayName": channelname,
-         "description": "My Sample Team’s Description"
-         }
-    apiReq('post',a,url,json.dumps(data))
-    print("    获取team信息")
-    url=r'https://graph.microsoft.com/v1.0/me/joinedTeams'
-    teamlist = json.loads(apiReq('get',a,url))
-    for teamcount in range(teamlist['@odata.count']):
-        if teamlist['value'][teamcount]['displayName'] == channelname:
-            #创建频道
-            print("    创建team频道")
-            data={
-                 "displayName": channelname,
-                 "description": "This channel is where we debate all future architecture plans",
-                 "membershipType": "standard"
-                 }
-            url=r'https://graph.microsoft.com/v1.0/teams/'+teamlist['value'][teamcount]['id']+r'/channels'
-            jsontxt = json.loads(apiReq('post',a,url,json.dumps(data)))
-            url=r'https://graph.microsoft.com/v1.0/teams/'+teamlist['value'][teamcount]['id']+r'/channels/'+jsontxt['id']
-            print("    删除team频道")
-            apiReq('delete',a,url)
-            #删除teams
-            print("    删除team")
-            url=r'https://graph.microsoft.com/v1.0/groups/'+teamlist['value'][teamcount]['id']
-            apiReq('delete',a,url)  
-            
+    try:
+        print('    新建team')
+        url=r'https://graph.microsoft.com/v1.0/teams'
+        data={
+            "template@odata.bind": "https://graph.microsoft.com/v1.0/teamsTemplates('standard')",
+            "displayName": channelname,
+            "description": "My Sample Team’s Description"
+            }
+        apiReq('post',a,url,json.dumps(data))
+        print("    获取team信息")
+        url=r'https://graph.microsoft.com/v1.0/me/joinedTeams'
+        teamlist = json.loads(apiReq('get',a,url))
+        for teamcount in range(teamlist['@odata.count']):
+            if teamlist['value'][teamcount]['displayName'] == channelname:
+                #创建频道
+                print("    创建team频道")
+                data={
+                    "displayName": channelname,
+                    "description": "This channel is where we debate all future architecture plans",
+                    "membershipType": "standard"
+                    }
+                url=r'https://graph.microsoft.com/v1.0/teams/'+teamlist['value'][teamcount]['id']+r'/channels'
+                jsontxt = json.loads(apiReq('post',a,url,json.dumps(data)))
+                url=r'https://graph.microsoft.com/v1.0/teams/'+teamlist['value'][teamcount]['id']+r'/channels/'+jsontxt['id']
+                print("    删除team频道")
+                apiReq('delete',a,url)
+                #删除teams
+                print("    删除team")
+                url=r'https://graph.microsoft.com/v1.0/groups/'+teamlist['value'][teamcount]['id']
+                apiReq('delete',a,url)  
+    except KeyError:
+        print("        操作中断")
+        return 
+        
 def onenoteWrite(a,notename):
-    print('    创建笔记本')
-    url=r'https://graph.microsoft.com/v1.0/me/onenote/notebooks'
-    data={
-         "displayName": notename,
-         }
-    notetxt = json.loads(apiReq('post',a,url,json.dumps(data)))
-    print('    创建笔记本分区')
-    url=r'https://graph.microsoft.com/v1.0/me/onenote/notebooks/'+notetxt['id']+r'/sections'
-    data={
-         "displayName": notename,
-         }
-    apiReq('post',a,url,json.dumps(data))
-    print('    删除笔记本')
-    url=r'https://graph.microsoft.com/v1.0/me/drive/root:/Notebooks/'+notename
-    apiReq('delete',a,url)
+    try:
+        print('    创建笔记本')
+        url=r'https://graph.microsoft.com/v1.0/me/onenote/notebooks'
+        data={
+            "displayName": notename,
+            }
+        notetxt = json.loads(apiReq('post',a,url,json.dumps(data)))
+        print('    创建笔记本分区')
+        url=r'https://graph.microsoft.com/v1.0/me/onenote/notebooks/'+notetxt['id']+r'/sections'
+        data={
+             "displayName": notename,
+             }
+        apiReq('post',a,url,json.dumps(data))
+        print('    删除笔记本')
+        url=r'https://graph.microsoft.com/v1.0/me/drive/root:/Notebooks/'+notename
+        apiReq('delete',a,url)
+    except KeyError:
+        print("        操作中断")
+        return 
     
 #一次性获取access_token，降低获取率
 for a in range(1, int(app_num)+1):

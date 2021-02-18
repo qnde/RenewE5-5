@@ -6,8 +6,11 @@ from base64 import b64encode
 from nacl import encoding, public
 
 app_num=os.getenv('APP_NUM')
+redirect_uri=os.getenv('REDIRECT_URI')
 if app_num == '':
     app_num='1'
+if redirect_uri =='':
+    redirect_uri = r'https://login.microsoftonline.com/common/oauth2/nativeclient'
 gh_token=os.getenv('GH_TOKEN')
 gh_repo=os.getenv('GH_REPO')
 #ms_token=os.getenv('MS_TOKEN')
@@ -20,6 +23,7 @@ key_id='wangziyingwen'
 
 #公钥获取
 def getpublickey(Auth,geturl):
+    #try:except?
     headers={
             'Accept': 'application/vnd.github.v3+json','Authorization': Auth
             }
@@ -39,6 +43,7 @@ def getpublickey(Auth,geturl):
 
 #微软refresh_token获取
 def getmstoken(ms_token,appnum):
+    #try:except?
     headers={
             'Content-Type':'application/x-www-form-urlencoded'
             }
@@ -47,7 +52,7 @@ def getmstoken(ms_token,appnum):
          'refresh_token': ms_token,
          'client_id':client_id,
          'client_secret':client_secret,
-         'redirect_uri':'https://login.microsoftonline.com/common/oauth2/nativeclient'
+         'redirect_uri':redirect_uri,
          }
     for retry_ in range(4):
         html = req.post('https://login.microsoftonline.com/common/oauth2/v2.0/token',data=data,headers=headers)
