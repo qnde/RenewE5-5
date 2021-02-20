@@ -55,6 +55,22 @@ jobs:
         MS_TOKEN_5: ${{ secrets.MS_TOKEN_5 }} 
         CLIENT_ID_5: ${{ secrets.CLIENT_ID_5 }}
         CLIENT_SECRET_5: ${{ secrets.CLIENT_SECRET_5 }}
+        #账号/应用6
+        MS_TOKEN_6: ${{ secrets.MS_TOKEN_6 }} 
+        CLIENT_ID_6: ${{ secrets.CLIENT_ID_6 }}
+        CLIENT_SECRET_6: ${{ secrets.CLIENT_SECRET_6 }}
+        #账号/应用7
+        MS_TOKEN_7: ${{ secrets.MS_TOKEN_7 }} 
+        CLIENT_ID_7: ${{ secrets.CLIENT_ID_7 }}
+        CLIENT_SECRET_7: ${{ secrets.CLIENT_SECRET_7 }}
+        #账号/应用8
+        MS_TOKEN_8: ${{ secrets.MS_TOKEN_8 }} 
+        CLIENT_ID_8: ${{ secrets.CLIENT_ID_8 }}
+        CLIENT_SECRET_8: ${{ secrets.CLIENT_SECRET_8 }}
+        #账号/应用9
+        MS_TOKEN_9: ${{ secrets.MS_TOKEN_9 }} 
+        CLIENT_ID_9: ${{ secrets.CLIENT_ID_9 }}
+        CLIENT_SECRET_9: ${{ secrets.CLIENT_SECRET_9 }}
         #如此类推，自己复制增加账号/应用
         MS_TOKEN_n: ${{ secrets.MS_TOKEN_n }} 
         CLIENT_ID_n: ${{ secrets.CLIENT_ID_n }}
