@@ -1,6 +1,6 @@
 #查询系列api，每6小时调用一次（周六日不启动）
 name: Run Api.Read
-
+ 
 on: 
   release:
     types: [published]
