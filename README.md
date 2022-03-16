@@ -14,7 +14,7 @@ AutoApi系列：~~AutoApi(v1.0)~~、~~AutoApiSecret(v2.0)~~、~~AutoApiSR(v3.0)~
    * 大部分错误说明已更新进程序，详细请运行后看action日志报告
 * 视频教程：
    * B站：https://www.bilibili.com/video/BV185411n7Mq/
-
+ 
 ## 步骤 ##
 * 准备工具：
    * E5开发者账号（**即onmicrosoft后缀账号，非个人/私人账号**）
